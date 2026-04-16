@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth antialiased" x-data="{ darkMode: true, scrolled: false, mobileMenuOpen: false }" :class="{ 'dark': darkMode }" @scroll.window="scrolled = (window.pageYOffset > 40)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jhonny | Síndico Profissional - RJ</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Configuração & Paleta Dourada -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#FFFFFF',
+                            dark: '#0A101D',   // Fundo escuro premium
+                            blue: '#1E3A8A',   // Azul corporativo
+                            gold: '#D4AF37',   // Dourado luxo solicitado
+                            textLight: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'progress': 'progress 1.5s ease-in-out infinite',
+                        'shine-slide': 'shine-slide 3s infinite',
+                        'shine-text': 'shine-text 3s linear infinite',
+                    },
+                    keyframes: {
+                        progress: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(200%)' }
+                        },
+                        'shine-slide': {
+                            '0%': { transform: 'translateX(-100%) skewX(-15deg)' },
+                            '50%, 100%': { transform: 'translateX(200%) skewX(-15deg)' }
+                        },
+                        'shine-text': {
+                            'to': { backgroundPosition: '200% center' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+
+        /* Fundo Grid Sutil */
+        .bg-grid-pattern {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(30, 58, 138, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 58, 138, 0.05) 1px, transparent 1px);
+        }
+        .dark .bg-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(248, 250, 252, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(248, 250, 252, 0.03) 1px, transparent 1px);
+        }
+
+        /* Glow Dourado */
+        .glow-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(10,16,29,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .dark .glass-card {
+            background: rgba(10, 16, 29, 0.6);
+            border: 1px solid rgba(248, 250, 252, 0.05);
+        }
+
+        /* Marquees */
+        @keyframes marquee-left {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes marquee-right {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0%); }
+        }
+        .animate-marquee-left { animation: marquee-left 30s linear infinite; }
+        .animate-marquee-right { animation: marquee-right 30s linear infinite; }
+        .animate-marquee-fast { animation: marquee-left 15s linear infinite; }
+        .pause-on-hover:hover .animate-marquee-left,
+        .pause-on-hover:hover .animate-marquee-right { animation-play-state: paused; }
+
+        /* Outline Text (Vazado) */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(30, 58, 138, 0.3);
+        }
+        .dark .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Slide Luminoso nos Botões */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-15deg);
+            animation: shine-slide 3.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Divisor Elegante */
+        .section-divider {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        .section-divider-line {
+            width: 100%;
+            max-w: 600px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            position: relative;
+        }
+        .section-divider-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 3px;
+            background: rgba(212, 175, 55, 0.8);
+            border-radius: 999px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Flip Cards (Quebra de Objeções) */
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light dark:bg-brand-dark text-slate-900 dark:text-brand-textLight transition-colors duration-300 relative overflow-x-hidden pt-10">
+
+    <!-- PRELOADER -->
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-brand-light dark:bg-brand-dark flex flex-col items-center justify-center transition-opacity duration-700">
+        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1776304646/Captura_de_tela_2026-04-15_225639_g1ed6l.png" alt="Logo Jhonny" class="w-32 md:w-48 animate-pulse object-contain drop-shadow-xl">
+        <div class="mt-8 w-48 h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden relative">
+            <div class="absolute top-0 bottom-0 left-0 w-full bg-brand-gold animate-progress rounded-full"></div>
+        </div>
+    </div>
+
+    <!-- Padrão de Fundo Global -->
+    <div class="fixed inset-0 bg-grid-pattern z-[-1] pointer-events-none"></div>
+
+    <!-- BOTÕES FLUTUANTES DE CONTATO INSTANTÂNEO COM LOGOS REAIS -->
+    <div class="fixed bottom-6 right-6 z-[90] flex flex-col gap-3">
+        <!-- Insta Gradient Button -->
+        <a href="https://www.instagram.com/sindicojhonny/" target="_blank" class="w-12 h-12 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-full flex items-center justify-center text-white shadow-[0_0_15px_rgba(238,42,123,0.4)] hover:scale-110 transition-transform relative overflow-hidden group">
+            <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 z-10"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        </a>
+        <!-- WhatsApp Original Button -->
+        <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20estou%20no%20seu%20site%20e%20quero%20informações." target="_blank" class="w-12 h-12 bg-[#25D366] hover:bg-[#1EBE5D] rounded-full flex items-center justify-center text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:scale-110 transition-all relative overflow-hidden btn-shine">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </a>
+    </div>
+
+    <!-- TOP ROLLER FINO DE AUTORIDADE -->
+    <div class="absolute top-0 left-0 w-full h-10 bg-brand-blue text-white z-[100] flex items-center overflow-hidden text-xs font-bold uppercase tracking-[0.2em]">
+        <div class="flex flex-nowrap shrink-0 animate-marquee-fast whitespace-nowrap items-center">
+            <span class="mx-6 sm:mx-8">✓ GESTÃO DE ELITE</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ ATENDIMENTO EM TODO O RJ</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ REDUÇÃO COMPROVADA DE CUSTOS</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ TRANSPARÊNCIA TOTAL 360°</span><span class="text-brand-gold">•</span>
+        </div>
+        <div class="flex flex-nowrap shrink-0 animate-marquee-fast whitespace-nowrap items-center" aria-hidden="true">
+            <span class="mx-6 sm:mx-8">✓ GESTÃO DE ELITE</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ ATENDIMENTO EM TODO O RJ</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ REDUÇÃO COMPROVADA DE CUSTOS</span><span class="text-brand-gold">•</span>
+            <span class="mx-6 sm:mx-8">✓ TRANSPARÊNCIA TOTAL 360°</span><span class="text-brand-gold">•</span>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO MINIMALISTA -->
+    <nav class="fixed w-full z-50 glass-card border-b backdrop-blur-md transition-all duration-300" :class="scrolled ? 'top-0 shadow-lg' : 'top-10'">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center transition-all duration-300" :class="scrolled ? 'py-2 md:py-3' : 'py-3 md:py-4'">
+            
+            <!-- Logo Navbar Reajustada e Otimizada -->
+            <div class="flex items-center gap-2 md:gap-3 relative z-[101]">
+                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1776304689/Captura_de_tela_2026-04-15_225639_1_jjye0s.png" alt="Logo Secundária" class="h-6 md:h-8 object-contain">
+                <div class="flex flex-col">
+                    <div class="text-base md:text-lg font-display font-black tracking-tighter text-brand-gold leading-none">JHONNY</div>
+                    <div class="text-[8px] md:text-[9px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">Síndico Profissional</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 md:gap-4 relative z-[101]">
+                <button @click="darkMode = !darkMode" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-gold transition-colors" aria-label="Alternar Tema">
+                    <span x-show="darkMode" x-cloak><i data-lucide="sun" class="w-5 h-5"></i></span>
+                    <span x-show="!darkMode" x-cloak><i data-lucide="moon" class="w-5 h-5"></i></span>
+                </button>
+
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-gold transition-colors" aria-label="Menu">
+                    <span x-show="!mobileMenuOpen"><i data-lucide="menu" class="w-5 h-5"></i></span>
+                    <span x-show="mobileMenuOpen" x-cloak><i data-lucide="x" class="w-5 h-5"></i></span>
+                </button>
+                
+                <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" x-transition.opacity class="absolute top-[120%] right-0 w-48 glass-card border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col p-2 gap-1 shadow-2xl backdrop-blur-2xl" x-cloak>
+                    <a href="#presentation" @click="mobileMenuOpen = false" class="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-colors">O Especialista</a>
+                    <a href="#services_grid" @click="mobileMenuOpen = false" class="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-colors">Serviços</a>
+                    <a href="#quiz_triagem" @click="mobileMenuOpen = false" class="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-colors">Diagnóstico</a>
+                    <a href="#location" @click="mobileMenuOpen = false" class="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-colors">Atuação (RJ)</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION 1: HERO -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 overflow-hidden">
+        <div class="glow-bg dark:opacity-100 opacity-0 transition-opacity"></div>
+        <div class="max-w-7xl mx-auto px-4 md:px-6 text-center z-10 reveal">
+            <p class="uppercase tracking-[0.2em] text-brand-blue dark:text-brand-gold text-xs sm:text-sm font-semibold mb-4 drop-shadow-md">Síndico Profissional de Alta Performance</p>
+            <h1 class="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.1] md:leading-[1] mb-6 md:mb-8 text-slate-900 dark:text-white uppercase">
+                Valorização<br>
+                <!-- Destaque Luminoso no Texto -->
+                <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">
+                    de Patrimônio
+                </span><span class="text-brand-gold">.</span>
+            </h1>
+            <p class="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 md:mb-12 text-slate-600 dark:text-slate-400 px-2">
+                Gestão cirúrgica, tecnológica e transparente para condomínios que exigem o próximo nível de segurança e eficiência.
+            </p>
+            
+            <!-- Botão com Slide Luminoso -->
+            <a href="#quiz_triagem" class="group btn-shine inline-flex items-center justify-center px-6 md:px-8 py-4 font-bold text-slate-900 bg-brand-gold rounded-full transition-transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] w-full sm:w-auto text-sm md:text-base">
+                <span class="relative flex items-center gap-2 z-10">
+                    Iniciar Diagnóstico Rápido
+                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- MEGA ROLLER 1 -->
+    <div class="w-full overflow-hidden pb-8 opacity-60 pointer-events-none select-none flex">
+        <div class="flex flex-nowrap shrink-0 animate-marquee-left whitespace-nowrap items-center font-display font-black text-4xl md:text-6xl lg:text-7xl uppercase tracking-tighter text-outline">
+            <span class="mx-4 md:mx-8">TECNOLOGIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">EFICIÊNCIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">TRANSPARÊNCIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">SEGURANÇA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+        </div>
+        <div class="flex flex-nowrap shrink-0 animate-marquee-left whitespace-nowrap items-center font-display font-black text-4xl md:text-6xl lg:text-7xl uppercase tracking-tighter text-outline" aria-hidden="true">
+            <span class="mx-4 md:mx-8">TECNOLOGIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">EFICIÊNCIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">TRANSPARÊNCIA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">SEGURANÇA</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+        </div>
+    </div>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- SECTION 2: O ESPECIALISTA -->
+    <section id="presentation" class="py-12 md:py-16 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 reveal">
+            <div class="glass-card rounded-[2rem] md:rounded-[3rem] p-3 md:p-8 border border-slate-200 dark:border-slate-800 flex flex-row gap-4 md:gap-12 items-stretch relative overflow-visible shadow-2xl bg-white dark:bg-[#0A101D]">
+                
+                <!-- Esquerda: Foto & Bolhas -->
+                <div class="w-[45%] md:w-[45%] relative min-h-[300px] md:min-h-[500px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shrink-0 bg-brand-blue/5 dark:bg-brand-gold/5 shadow-inner">
+                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1776305540/CONCLU%C3%8DDAS._owz76r.svg" alt="Jhonny O Especialista" class="absolute inset-0 w-full h-full object-cover object-top scale-105">
+                    
+                    <div class="absolute top-[35%] left-2 md:top-[40%] md:left-6 -translate-y-1/2 glass-card px-2 py-1.5 md:px-5 md:py-3 rounded-xl md:rounded-2xl border border-white/20 shadow-xl flex flex-col items-center justify-center backdrop-blur-md bg-white/60 dark:bg-slate-900/60 z-10">
+                        <span class="font-display font-black text-brand-blue dark:text-brand-gold text-sm md:text-3xl leading-none">7+</span>
+                        <span class="text-[8px] md:text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mt-0.5 md:mt-1">Anos Exp.</span>
+                    </div>
+                    
+                    <div class="absolute bottom-4 right-2 md:bottom-10 md:right-6 glass-card px-2 py-1.5 md:px-5 md:py-3 rounded-xl md:rounded-2xl border border-white/20 shadow-xl flex flex-col items-center justify-center backdrop-blur-md bg-white/60 dark:bg-slate-900/60 z-10">
+                        <span class="font-display font-black text-brand-blue dark:text-brand-gold text-sm md:text-3xl leading-none">30+</span>
+                        <span class="text-[8px] md:text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mt-0.5 md:mt-1">Condomínios</span>
+                    </div>
+                </div>
+
+                <!-- Direita: Copy & CTAs -->
+                <div class="w-[55%] md:w-[55%] flex flex-col justify-center py-2 md:py-8 pr-1 md:pr-4">
+                    <div class="inline-flex items-center gap-2 mb-2 md:mb-4">
+                        <span class="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full bg-brand-gold animate-pulse"></span>
+                        <span class="text-brand-blue dark:text-brand-gold text-[9px] md:text-sm font-bold tracking-widest uppercase">O Especialista</span>
+                    </div>
+                    
+                    <h2 class="font-display font-black text-2xl sm:text-3xl md:text-6xl uppercase tracking-tighter mb-2 md:mb-6 dark:text-white text-slate-900 leading-[1.1]">
+                        Gestão de<br>Elite.
+                    </h2>
+                    
+                    <p class="text-[10px] sm:text-[11px] md:text-base lg:text-lg text-slate-600 dark:text-slate-400 mb-4 md:mb-8 leading-tight md:leading-relaxed">
+                        Redução de custos cirúrgica, maximização de segurança e eliminação de atritos. O resultado? <strong class="dark:text-brand-gold text-brand-blue">Comunidade pacífica e valorização garantida.</strong>
+                    </p>
+                    
+                    <!-- CTAs com Logos Reais e Luminous Slide -->
+                    <div class="flex flex-col gap-2 md:gap-4 w-full">
+                        <!-- WhatsApp -->
+                        <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20quero%20conhecer%20a%20sua%20gestão%20de%20elite." target="_blank" class="btn-shine w-full text-center px-2 py-2.5 md:px-8 md:py-4 font-bold text-white bg-[#25D366] hover:bg-[#1EBE5D] rounded-lg md:rounded-2xl transition-transform hover:scale-[1.02] shadow-[0_0_15px_rgba(37,211,102,0.3)] text-[10px] sm:text-[11px] md:text-base flex items-center justify-center gap-1.5 md:gap-2">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 md:w-5 md:h-5 relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                            <span class="relative z-10">WhatsApp</span>
+                        </a>
+                        <!-- Instagram Gradient -->
+                        <a href="https://www.instagram.com/sindicojhonny/" target="_blank" class="btn-shine w-full text-center px-2 py-2.5 md:px-8 md:py-4 font-bold text-white bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-lg md:rounded-2xl transition-transform hover:scale-[1.02] shadow-[0_0_15px_rgba(238,42,123,0.3)] text-[10px] sm:text-[11px] md:text-base flex items-center justify-center gap-1.5 md:gap-2 border-none">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 md:w-5 md:h-5 relative z-10"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                            <span class="relative z-10">@sindicojhonny</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- SECTION 2.5: QUEBRA DE OBJEÇÕES (FLIP CARDS) -->
+    <section id="objections" class="py-12 md:py-16 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 reveal">
+            <div class="text-center mb-10 md:mb-12">
+                <h2 class="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tighter mb-4 text-slate-900 dark:text-white">
+                    Ainda tem <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">Dúvidas?</span>
+                </h2>
+                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400">Passe o mouse (ou toque no celular) nos cards abaixo e descubra a verdade sobre a nossa gestão de elite.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="flip-card h-[280px] md:h-[320px] w-full rounded-3xl cursor-pointer group">
+                    <div class="flip-card-inner rounded-3xl shadow-xl">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0A101D]">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-blue/10 dark:bg-brand-gold/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="circle-dollar-sign" class="w-7 h-7 md:w-8 md:h-8 text-brand-blue dark:text-brand-gold"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">É muito caro?</h3>
+                            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-tight">O maior mito da gestão profissional.</p>
+                            <span class="absolute bottom-6 text-[10px] uppercase font-bold tracking-widest text-brand-gold animate-pulse">Toque para virar</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-brand-gold/50 bg-brand-blue dark:bg-slate-900">
+                            <p class="text-xs md:text-sm text-white dark:text-slate-300 mb-6 leading-relaxed">
+                                A economia gerada apenas no 1º trimestre (auditoria e revisão de contratos) <strong class="text-brand-gold">paga a nossa gestão por meses</strong>.
+                            </p>
+                            <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20quero%20entender%20os%20custos%20para%20o%20meu%20condomínio." target="_blank" class="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold rounded-xl text-[10px] md:text-xs transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-600/30">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                                Tirar dúvida no WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flip-card h-[280px] md:h-[320px] w-full rounded-3xl cursor-pointer group">
+                    <div class="flip-card-inner rounded-3xl shadow-xl">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0A101D]">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-blue/10 dark:bg-brand-gold/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="map-pin-off" class="w-7 h-7 md:w-8 md:h-8 text-brand-blue dark:text-brand-gold"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">Vai ser ausente?</h3>
+                            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-tight">"Síndico profissional nunca está no prédio."</p>
+                            <span class="absolute bottom-6 text-[10px] uppercase font-bold tracking-widest text-brand-gold animate-pulse">Toque para virar</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-brand-gold/50 bg-brand-blue dark:bg-slate-900">
+                            <p class="text-xs md:text-sm text-white dark:text-slate-300 mb-6 leading-relaxed">
+                                Garantimos <strong class="text-brand-gold">visitas presenciais estratégicas</strong> e um canal de comunicação 24h. O condomínio nunca fica sem resposta.
+                            </p>
+                            <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20como%20funciona%20a%20sua%20presença%20no%20condomínio?" target="_blank" class="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold rounded-xl text-[10px] md:text-xs transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-600/30">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                                Tirar dúvida no WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flip-card h-[280px] md:h-[320px] w-full rounded-3xl cursor-pointer group">
+                    <div class="flip-card-inner rounded-3xl shadow-xl">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0A101D]">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-blue/10 dark:bg-brand-gold/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="refresh-cw" class="w-7 h-7 md:w-8 md:h-8 text-brand-blue dark:text-brand-gold"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">Difícil trocar?</h3>
+                            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-tight">"Vai dar muita dor de cabeça mudar agora."</p>
+                            <span class="absolute bottom-6 text-[10px] uppercase font-bold tracking-widest text-brand-gold animate-pulse">Toque para virar</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-brand-gold/50 bg-brand-blue dark:bg-slate-900">
+                            <p class="text-xs md:text-sm text-white dark:text-slate-300 mb-6 leading-relaxed">
+                                Assumimos <strong class="text-brand-gold">100% da transição burocrática</strong>. Realizamos a auditoria inicial e a troca de contratos. Zero atrito.
+                            </p>
+                            <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20como%20é%20feito%20o%20processo%20de%20transição?" target="_blank" class="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold rounded-xl text-[10px] md:text-xs transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-600/30">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                                Tirar dúvida no WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flip-card h-[280px] md:h-[320px] w-full rounded-3xl cursor-pointer group">
+                    <div class="flip-card-inner rounded-3xl shadow-xl">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0A101D]">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-blue/10 dark:bg-brand-gold/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="eye" class="w-7 h-7 md:w-8 md:h-8 text-brand-blue dark:text-brand-gold"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">E o dinheiro?</h3>
+                            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-tight">"Como saberei para onde vai o fundo do prédio."</p>
+                            <span class="absolute bottom-6 text-[10px] uppercase font-bold tracking-widest text-brand-gold animate-pulse">Toque para virar</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-brand-gold/50 bg-brand-blue dark:bg-slate-900">
+                            <p class="text-xs md:text-sm text-white dark:text-slate-300 mb-6 leading-relaxed">
+                                Esqueça as pastas impressas indecifráveis. Entregamos <strong class="text-brand-gold">prestação de contas digital</strong> e simplificada.
+                            </p>
+                            <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20quero%20ver%20como%20é%20a%20sua%20prestação%20de%20contas." target="_blank" class="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold rounded-xl text-[10px] md:text-xs transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-600/30">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                                Tirar dúvida no WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- SECTION 3: QUIZ PRÉ-TRIAGEM -->
+    <section id="quiz_triagem" class="py-12 md:py-16 bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800 relative">
+        <div class="max-w-3xl mx-auto px-4 md:px-6 reveal relative z-10">
+            <div class="text-center mb-8 md:mb-12">
+                <h2 class="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tighter mb-4 text-slate-900 dark:text-white">
+                    Pré-Triagem de <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">Gestão</span>
+                </h2>
+                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400">Descubra o quão blindado e eficiente está o seu condomínio hoje.</p>
+            </div>
+
+            <div x-data="quizLogic()" class="glass-card bg-white dark:bg-slate-800/80 rounded-3xl p-6 md:p-12 shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col justify-start relative overflow-hidden">
+                <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 overflow-hidden absolute top-0 left-0">
+                    <div class="bg-brand-blue dark:bg-brand-gold h-full transition-all duration-500 ease-out" :style="`width: ${(step / 4) * 100}%`"></div>
+                </div>
+
+                <div class="w-full pt-4">
+                    <div x-show="step === 1" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak>
+                        <h3 class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white mb-6">Quantas unidades tem o seu condomínio?</h3>
+                        <div class="grid gap-3 md:gap-4">
+                            <button @click="selectAnswer('q1', 'Menos de 50 unidades')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 text-sm md:text-base">Menos de 50 unidades</button>
+                            <button @click="selectAnswer('q1', 'De 50 a 150 unidades')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 text-sm md:text-base">De 50 a 150 unidades</button>
+                            <button @click="selectAnswer('q1', 'Mais de 150 unidades')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 text-sm md:text-base">Mais de 150 unidades</button>
+                        </div>
+                    </div>
+
+                    <div x-show="step === 2" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak>
+                        <h3 class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white mb-6">Qual a maior dor do condomínio hoje?</h3>
+                        <div class="grid gap-3 md:gap-4">
+                            <button @click="selectAnswer('q2', 'Inadimplência alta e Falta de Caixa')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 flex justify-between items-center text-sm md:text-base group">
+                                <span>Inadimplência alta e falta de caixa</span> 
+                                <i data-lucide="trending-down" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-brand-blue dark:group-hover:text-brand-gold shrink-0 transition-colors"></i>
+                            </button>
+                            <button @click="selectAnswer('q2', 'Falta de Manutenção e Obras Atrasadas')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 flex justify-between items-center text-sm md:text-base group">
+                                <span>Falta de manutenção e obras paradas</span> 
+                                <i data-lucide="wrench" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-brand-blue dark:group-hover:text-brand-gold shrink-0 transition-colors"></i>
+                            </button>
+                            <button @click="selectAnswer('q2', 'Conflitos entre Moradores / Gestão Ausente')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 flex justify-between items-center text-sm md:text-base group">
+                                <span>Conflitos entre moradores e gestão ausente</span> 
+                                <i data-lucide="users" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-brand-blue dark:group-hover:text-brand-gold shrink-0 transition-colors"></i>
+                            </button>
+                            <button @click="selectAnswer('q2', 'Insegurança e Portaria Vulnerável')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 flex justify-between items-center text-sm md:text-base group">
+                                <span>Insegurança e portaria vulnerável</span> 
+                                <i data-lucide="shield-alert" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-brand-blue dark:group-hover:text-brand-gold shrink-0 transition-colors"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div x-show="step === 3" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak>
+                        <h3 class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white mb-6">Como você atua no condomínio?</h3>
+                        <div class="grid gap-3 md:gap-4">
+                            <button @click="selectAnswer('q3', 'Membro da Gestão (Conselho ou Síndico Atual)')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 text-sm md:text-base">Membro da Gestão (Conselho/Síndico Atual)</button>
+                            <button @click="selectAnswer('q3', 'Morador/Proprietário')" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-blue dark:hover:border-brand-gold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-medium text-slate-700 dark:text-slate-300 text-sm md:text-base">Morador/Proprietário</button>
+                        </div>
+                    </div>
+
+                    <div x-show="step === 4" x-transition:enter="transition ease-out duration-500 delay-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="text-center w-full" x-cloak>
+                        <div class="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-4 md:mb-6">
+                            <i data-lucide="check-circle" class="w-6 h-6 md:w-8 md:h-8"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-display font-black text-slate-900 dark:text-white mb-2 md:mb-4">Pré-triagem Concluída!</h3>
+                        <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-6 md:mb-8 max-w-md mx-auto">Já entendi o cenário do seu condomínio. Clique no botão abaixo para me enviar esses dados no WhatsApp e agendarmos uma avaliação.</p>
+                        
+                        <!-- CTA Quiz Shine + SVG Real -->
+                        <a :href="generateWhatsAppUrl()" target="_blank" class="btn-shine inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 font-bold text-white bg-[#25D366] hover:bg-[#1EBE5D] rounded-full transition-transform hover:scale-105 shadow-lg shadow-green-600/30 w-full sm:w-auto text-sm md:text-base">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2 relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                            <span class="relative z-10">Enviar Avaliação no WhatsApp</span>
+                        </a>
+                        
+                        <button @click="resetQuiz()" class="mt-6 md:mt-8 text-xs md:text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white underline block mx-auto transition-colors">Refazer pré-triagem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- SECTION 4: BENTO GRID DE SERVIÇOS -->
+    <section id="services_grid" class="py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <h2 class="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tighter mb-10 text-slate-900 dark:text-white text-center reveal">
+                Arquitetura de <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">Serviços</span>
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 reveal">
+                <div class="glass-card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 group hover:border-brand-gold/50 transition-colors">
+                    <p class="font-display font-black text-4xl text-brand-blue dark:text-brand-gold"><span class="counter" data-target="30">0</span>%</p>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase mt-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Redução Média Inadimplência</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 group hover:border-brand-gold/50 transition-colors">
+                    <p class="font-display font-black text-4xl text-brand-blue dark:text-brand-gold"><span class="counter" data-target="100">0</span>%</p>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase mt-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Transparência nas Contas</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 group hover:border-brand-gold/50 transition-colors">
+                    <p class="font-display font-black text-4xl text-brand-blue dark:text-brand-gold"><span class="counter" data-target="24">0</span>h</p>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase mt-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Monitoramento Ativo</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 group hover:border-brand-gold/50 transition-colors">
+                    <p class="font-display font-black text-4xl text-brand-blue dark:text-brand-gold">+<span class="counter" data-target="50">0</span></p>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase mt-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Parceiros Homologados</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 reveal">
+                <div class="group md:col-span-2 relative rounded-3xl overflow-hidden glass-card p-6 md:p-8 min-h-[250px] border border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-gold/50 transition-colors duration-500 flex flex-col justify-end">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-blue/5 to-transparent dark:from-brand-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10">
+                        <i data-lucide="bar-chart-3" class="w-8 h-8 md:w-10 md:h-10 text-brand-blue dark:text-brand-gold mb-4 group-hover:-translate-y-1 transition-transform"></i>
+                        <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">Gestão Financeira</h3>
+                        <p class="text-sm md:text-base text-slate-600 dark:text-slate-400">Previsão orçamentária rigorosa, redução de passivos e otimização de fluxo de caixa em tempo real.</p>
+                    </div>
+                </div>
+
+                <div class="group relative rounded-3xl overflow-hidden glass-card p-6 md:p-8 min-h-[250px] border border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-gold/50 transition-colors duration-500 flex flex-col justify-end">
+                    <div class="relative z-10">
+                        <i data-lucide="fingerprint" class="w-8 h-8 md:w-10 md:h-10 text-brand-blue dark:text-brand-gold mb-4 group-hover:-translate-y-1 transition-transform"></i>
+                        <h3 class="font-display font-bold text-lg md:text-xl text-slate-900 dark:text-white uppercase mb-2">Segurança High-Tech</h3>
+                        <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">Controle de acesso inteligente e protocolos de contingência testados.</p>
+                    </div>
+                </div>
+
+                <div class="group relative rounded-3xl overflow-hidden glass-card p-6 md:p-8 min-h-[250px] border border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-gold/50 transition-colors duration-500 flex flex-col justify-end">
+                    <div class="relative z-10">
+                        <i data-lucide="network" class="w-8 h-8 md:w-10 md:h-10 text-brand-blue dark:text-brand-gold mb-4 group-hover:-translate-y-1 transition-transform"></i>
+                        <h3 class="font-display font-bold text-lg md:text-xl text-slate-900 dark:text-white uppercase mb-2">Rede de Parceiros</h3>
+                        <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">Fornecedores homologados com SLAs rigorosos de atendimento.</p>
+                    </div>
+                </div>
+
+                <div class="group md:col-span-2 relative rounded-3xl overflow-hidden glass-card p-6 md:p-8 min-h-[250px] border border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-gold/50 transition-colors duration-500 flex flex-col justify-end">
+                    <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-brand-blue/5 to-transparent dark:from-brand-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                    <div class="relative z-10 w-full lg:w-2/3">
+                        <i data-lucide="eye" class="w-8 h-8 md:w-10 md:h-10 text-brand-blue dark:text-brand-gold mb-4 group-hover:-translate-y-1 transition-transform"></i>
+                        <h3 class="font-display font-bold text-xl md:text-2xl text-slate-900 dark:text-white uppercase mb-2">Transparência 360°</h3>
+                        <p class="text-sm md:text-base text-slate-600 dark:text-slate-400">Acesso via app para todos os moradores: balancetes detalhados, comunicados diretos e rastreabilidade total de cada centavo gasto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEGA ROLLER 2 -->
+    <div class="w-full overflow-hidden py-8 opacity-60 pointer-events-none select-none flex">
+        <div class="flex flex-nowrap shrink-0 animate-marquee-right whitespace-nowrap items-center font-display font-black text-4xl md:text-6xl lg:text-7xl uppercase tracking-tighter text-outline">
+            <span class="mx-4 md:mx-8">VALORIZAÇÃO</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">COMPROMISSO</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">ALTA PERFORMANCE</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">RESULTADOS</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+        </div>
+        <div class="flex flex-nowrap shrink-0 animate-marquee-right whitespace-nowrap items-center font-display font-black text-4xl md:text-6xl lg:text-7xl uppercase tracking-tighter text-outline" aria-hidden="true">
+            <span class="mx-4 md:mx-8">VALORIZAÇÃO</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">COMPROMISSO</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">ALTA PERFORMANCE</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+            <span class="mx-4 md:mx-8">RESULTADOS</span><span class="text-brand-gold text-2xl md:text-4xl">✦</span>
+        </div>
+    </div>
+
+    <!-- SECTION 5: PROVA SOCIAL -->
+    <section id="social_proof" class="py-12 md:py-16 relative overflow-hidden flex flex-col">
+        <div class="absolute top-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-brand-blue/10 dark:bg-brand-gold/5 rounded-full blur-3xl z-[-1]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 md:px-6 mb-10 md:mb-12 text-center reveal">
+            <h2 class="font-display font-black text-3xl md:text-4xl uppercase tracking-tighter text-slate-900 dark:text-white">
+                Avaliado com 5 Estrelas por <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">Condôminos</span>
+            </h2>
+        </div>
+
+        <div class="flex overflow-hidden w-full group pause-on-hover relative">
+            <div class="flex flex-nowrap shrink-0 animate-marquee-left">
+                <!-- Depoimento 1 -->
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "Estávamos com 30% de inadimplência e brigas constantes. O Jhonny assumiu, implementou regras claras e recuperou o caixa em 6 meses."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 shrink-0">M</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Marcos Silva</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Condomínio Torres do Sol</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Depoimento 2 -->
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "A transparência é impecável. Toda semana recebemos um resumo digital do que foi feito. Nunca nos sentimos tão seguros com o nosso dinheiro."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold shrink-0">C</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Camila Costa</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Conselheira Fiscal</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Depoimento 3 -->
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "Manutenções preventivas de verdade. Não esperamos as coisas quebrarem para arrumar. Valorizou muito o nosso patrimônio nestes últimos anos."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 shrink-0">R</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Ricardo Mendes</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Residencial Vista Alta</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-nowrap shrink-0 animate-marquee-left" aria-hidden="true">
+                <!-- Repetição -->
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "Estávamos com 30% de inadimplência e brigas constantes. O Jhonny assumiu, implementou regras claras e recuperou o caixa em 6 meses."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 shrink-0">M</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Marcos Silva</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Condomínio Torres do Sol</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "A transparência é impecável. Toda semana recebemos um resumo digital do que foi feito. Nunca nos sentimos tão seguros com o nosso dinheiro."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold shrink-0">C</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Camila Costa</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Conselheira Fiscal</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[85vw] sm:w-[350px] md:w-[450px] shrink-0 glass-card p-6 md:p-8 rounded-2xl mx-3 md:mx-4 border border-slate-200 dark:border-slate-800 hover:border-brand-gold/50 transition-colors whitespace-normal">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4 md:mb-6">
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5 fill-current"></i>
+                    </div>
+                    <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mb-4 md:mb-6">
+                        "Manutenções preventivas de verdade. Não esperamos as coisas quebrarem para arrumar. Valorizou muito o nosso patrimônio nestes últimos anos."
+                    </p>
+                    <div class="flex items-center gap-3 md:gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 shrink-0">R</div>
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white text-xs md:text-sm">Ricardo Mendes</p>
+                            <p class="text-[10px] md:text-xs text-slate-500">Residencial Vista Alta</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"><div class="section-divider-line"></div></div>
+
+    <!-- SECTION 6: MAPA E COBERTURA (RJ) -->
+    <section id="location" class="py-12 md:py-16 bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12 reveal">
+            
+            <div class="w-full md:w-1/2 flex justify-center order-2 md:order-1 relative rounded-3xl overflow-hidden glass-card p-2 border border-slate-200 dark:border-slate-800 shadow-2xl h-[300px] md:h-[400px]">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467692.04886616895!2d-43.79541571477759!3d-22.91388506692985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9bde559108a05b%3A0x50dc426c672fd24e!2sRio%20de%20Janeiro%2C%20RJ!5e0!3m2!1spt-BR!2sbr!4v1714000000000!5m2!1spt-BR!2sbr" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0; border-radius: 1.25rem;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade" 
+                    class="filter dark:invert-[90%] dark:hue-rotate-180 dark:contrast-[85%] transition-all duration-500">
+                </iframe>
+            </div>
+            
+            <div class="w-full md:w-1/2 text-center md:text-left order-1 md:order-2">
+                <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl uppercase tracking-tighter mb-4 md:mb-6 dark:text-white text-slate-900 leading-tight">
+                    Atuação Rápida em <br><span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">Todo o Rio de Janeiro</span>
+                </h2>
+                <p class="text-base md:text-lg text-slate-600 dark:text-slate-400 mb-6 md:mb-8 leading-relaxed">
+                    Distância não é desculpa para má gestão. Nossa equipe atende presencialmente condomínios em toda a região metropolitana do RJ, garantindo que o seu patrimônio tenha a supervisão operacional diária que merece.
+                </p>
+                
+                <a href="https://wa.me/5521999999999?text=Olá%20Jhonny,%20gostaria%20de%20agendar%20uma%20visita%20sua%20ao%20meu%20condomínio%20no%20RJ." target="_blank" class="btn-shine inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 font-bold text-slate-900 bg-brand-gold rounded-full transition-transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] w-full sm:w-auto text-sm md:text-base">
+                    <i data-lucide="calendar-check" class="w-4 h-4 md:w-5 md:h-5 mr-2 relative z-10"></i>
+                    <span class="relative z-10">Agendar Visita no Condomínio</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: OFERTA FINAL -->
+    <section class="py-16 md:py-24 relative">
+        <div class="max-w-4xl mx-auto px-4 md:px-6 text-center reveal">
+            <h2 class="font-display font-black text-3xl sm:text-4xl md:text-6xl uppercase tracking-tighter mb-4 md:mb-6 text-slate-900 dark:text-white leading-tight">
+                Assuma o controle do seu <span class="bg-[linear-gradient(110deg,#1E3A8A,45%,#60A5FA,55%,#1E3A8A)] dark:bg-[linear-gradient(110deg,#D4AF37,45%,#FFF,55%,#D4AF37)] bg-[length:200%_100%] animate-shine-text text-transparent bg-clip-text">condomínio hoje.</span>
+            </h2>
+            <p class="text-base md:text-xl text-slate-600 dark:text-slate-400 mb-8 md:mb-10 px-2">
+                Chega de surpresas desagradáveis nas assembleias e cotas extras sem explicação. Seu patrimônio exige uma gestão transparente, cirúrgica e de elite.
+            </p>
+            <a href="#quiz_triagem" class="group btn-shine inline-flex items-center justify-center px-6 md:px-10 py-4 md:py-5 font-bold text-sm md:text-lg text-slate-900 bg-brand-gold rounded-full transition-transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)] w-full sm:w-auto">
+                <span class="relative flex items-center gap-2 z-10">
+                    Fazer Pré-triagem Gratuita
+                    <i data-lucide="arrow-right" class="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform"></i>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER DE AUTORIDADE COM LOGOS REAIS -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 pt-12 md:pt-16 pb-6 md:pb-8 bg-white dark:bg-[#0A101D]">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-10 md:mb-12">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1776304646/Captura_de_tela_2026-04-15_225639_g1ed6l.png" alt="Logo Jhonny" class="h-12 md:h-16 object-contain drop-shadow-sm">
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 px-4 md:px-0">
+                        Gestão de elite e valorização de patrimônio para condomínios exigentes de alto padrão no Rio de Janeiro.
+                    </p>
+                    <div class="flex items-center justify-center md:justify-start gap-3">
+                        <a href="https://www.instagram.com/sindicojhonny/" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-white hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] transition-all">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        </a>
+                        <a href="https://wa.me/5521999999999?text=Olá%20Jhonny" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-white hover:bg-[#25D366] transition-all">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                        </a>
+                        <a href="mailto:contato@jhonnygestao.com.br" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-brand-blue dark:hover:text-brand-gold transition-colors">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center md:text-left">
+                    <h4 class="font-bold text-slate-900 dark:text-white uppercase mb-4 tracking-wider text-sm">Acesso Rápido</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#services_grid" class="text-slate-500 hover:text-brand-blue dark:hover:text-brand-gold text-sm transition-colors">Arquitetura de Serviços</a></li>
+                        <li><a href="#quiz_triagem" class="text-slate-500 hover:text-brand-blue dark:hover:text-brand-gold text-sm transition-colors">Diagnóstico de Gestão</a></li>
+                        <li><a href="#location" class="text-slate-500 hover:text-brand-blue dark:hover:text-brand-gold text-sm transition-colors">Área de Cobertura (RJ)</a></li>
+                    </ul>
+                </div>
+
+                <div class="text-center md:text-left">
+                    <h4 class="font-bold text-slate-900 dark:text-white uppercase mb-4 tracking-wider text-sm">Contato Profissional</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center justify-center md:justify-start gap-2 text-sm text-slate-500">
+                            <i data-lucide="phone" class="w-4 h-4"></i> (21) 99999-9999
+                        </li>
+                        <li class="flex items-center justify-center md:justify-start gap-2 text-sm text-slate-500">
+                            <i data-lucide="mail" class="w-4 h-4"></i> contato@jhonnygestao.com.br
+                        </li>
+                        <li class="flex items-center justify-center md:justify-start gap-2 text-sm text-slate-500 mt-4">
+                            <span class="inline-flex items-center justify-center px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
+                                Aceitando novos condomínios
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 dark:text-slate-500 text-center md:text-left">
+                <p>&copy; 2026 Jhonny Síndico Profissional. Todos os direitos reservados.</p>
+                <p>CNPJ: 00.000.000/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Lógica do Preloader
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => { preloader.style.display = 'none'; }, 700);
+            }, 800);
+        });
+
+        // Inicializar Lucide Icons
+        lucide.createIcons();
+
+        // Lógica do Quiz (Alpine.js)
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('quizLogic', () => ({
+                step: 1,
+                answers: { q1: '', q2: '', q3: '' },
+                selectAnswer(question, answer) {
+                    this.answers[question] = answer;
+                    setTimeout(() => {
+                        if (this.step < 4) {
+                            this.step++;
+                            setTimeout(() => { lucide.createIcons(); }, 50);
+                        }
+                    }, 100);
+                },
+                generateWhatsAppUrl() {
+                    const phone = "5521999999999"; 
+                    const text = `*PRÉ-TRIAGEM DE GESTÃO* 🏢\n\nOlá Jhonny! Fiz o diagnóstico no site e este é o cenário do meu condomínio:\n\n👤 *Meu perfil:* ${this.answers.q3}\n📏 *Tamanho:* ${this.answers.q1}\n🚨 *Maior dor atual:* ${this.answers.q2}\n\nGostaria de agendar uma avaliação.`;
+                    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+                },
+                resetQuiz() {
+                    this.answers = { q1: '', q2: '', q3: '' };
+                    this.step = 1;
+                }
+            }));
+        });
+
+        // Intersection Observer para animações e contadores
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        
+                        // Lógica de Animação dos Números (Contadores)
+                        const counters = entry.target.querySelectorAll('.counter');
+                        counters.forEach(counter => {
+                            if (!counter.classList.contains('counted')) {
+                                counter.classList.add('counted');
+                                const target = +counter.getAttribute('data-target');
+                                const duration = 2000; 
+                                const increment = target / (duration / 16);
+                                let current = 0;
+                                
+                                const updateCounter = () => {
+                                    current += increment;
+                                    if (current < target) {
+                                        counter.innerText = Math.ceil(current);
+                                        requestAnimationFrame(updateCounter);
+                                    } else {
+                                        counter.innerText = target;
+                                    }
+                                };
+                                updateCounter();
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
